@@ -1,6 +1,7 @@
 package com.example.taskmanager.mysql.repositories;
 
 import com.example.taskmanager.mysql.entities.Medication;
+import com.example.taskmanager.mysql.entities.MedicineTimes;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

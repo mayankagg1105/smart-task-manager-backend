@@ -7,10 +7,8 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface TaskRepository extends JpaRepository<Task, Long> {
+public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Query(value = "SELECT * FROM task WHERE userid = :userid", nativeQuery = true)
     List<Task> findByUserId(@Param("userid") Integer userId);
 }
-
-

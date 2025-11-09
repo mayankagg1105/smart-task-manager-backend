@@ -39,24 +39,34 @@
 
 package com.example.taskmanager.services.Impl;
 
+import com.example.taskmanager.dto.EditTaskdto;
 import com.example.taskmanager.dto.TaskDetails;
 import com.example.taskmanager.dto.User;
 import com.example.taskmanager.mysql.entities.Task;
+import com.example.taskmanager.mysql.repositories.AuthRepository;
 import com.example.taskmanager.mysql.repositories.TaskRepository;
+import com.example.taskmanager.services.AuthServices;
 import com.example.taskmanager.services.TaskServices;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class TaskServicesImpl implements TaskServices {
 
     @Autowired
     TaskRepository taskRepository;
+
+    @Autowired
+    AuthServices authServices;
 
     private final Client geminiClient;
     private final String MODEL_NAME = "gemini-2.5-flash"; // Use a fast model for quick classification
@@ -124,5 +134,73 @@ public class TaskServicesImpl implements TaskServices {
             // Return a default priority in case of an API error
             return defaultPriority;
         }
+    }
+
+    @Override
+    public ResponseEntity<?> deleteTask(Integer id, String token) {
+        // Verify user
+        User user = authServices.verifyToken(token);
+        if (user == null) {
+            return ResponseEntity.status(401).body("Invalid or expired token");
+        }
+
+        // Find task
+        Optional<Task> taskOpt = taskRepository.findById(id);
+        if (taskOpt.isEmpty()) {
+            return ResponseEntity.status(404).body("Task does not exist");
+        }
+
+        Task task = taskOpt.get();
+
+        // Check if user owns the task
+        if (!Objects.equals(task.getUserid(), user.getUserId())) {
+            return ResponseEntity.status(403).body("Access denied");
+        }
+
+        // Delete
+        taskRepository.deleteById(id);
+        return ResponseEntity.ok("Task deleted successfully");
+    }
+
+    @Override
+    public ResponseEntity<?> editTask(Integer id, EditTaskdto editTaskdto, String token) {
+        // Step 1: Verify user
+        User user = authServices.verifyToken(token);
+        if (user == null) {
+            return ResponseEntity.status(401).body("Invalid or expired token");
+        }
+
+        // Step 2: Find task
+        Optional<Task> optionalTask = taskRepository.findById(id);
+        if (optionalTask.isEmpty()) {
+            return ResponseEntity.status(404).body("Task not found");
+        }
+
+        Task task = optionalTask.get();
+
+        // Step 3: Check ownership
+        if (!Objects.equals(task.getUserid(), user.getUserId())) {
+            return ResponseEntity.status(403).body("Access denied");
+        }
+
+        // Step 4: Update fields (only if provided)
+        if (editTaskdto.getNewTask() != null) {
+            task.setTask(editTaskdto.getNewTask());
+        }
+        if (editTaskdto.getNewDuedatetime() != null) {
+            task.setDuedatetime(editTaskdto.getNewDuedatetime());
+        }
+        if(editTaskdto.getNewPriority() != null){
+            task.setPriority(editTaskdto.getNewPriority());
+        }
+
+        // Save updated task
+        taskRepository.save(task);
+
+        // Step 5: Return success
+        return ResponseEntity.ok(Map.of(
+                "message", "Task updated successfully",
+                "task", task
+        ));
     }
 }

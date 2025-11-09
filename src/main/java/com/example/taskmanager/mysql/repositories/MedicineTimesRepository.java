@@ -16,4 +16,7 @@ public interface MedicineTimesRepository extends JpaRepository<MedicineTimes, Lo
     @Query("SELECT m.time FROM MedicineTimes m WHERE m.medicationid = :id")
     List<LocalTime> findById(@Param("id") int id);
 
+    @Query("SELECT m FROM MedicineTimes m WHERE m.medicationid = :id")
+    List<MedicineTimes> findAllByMedicationid(@Param("id") int id);
+
 }
