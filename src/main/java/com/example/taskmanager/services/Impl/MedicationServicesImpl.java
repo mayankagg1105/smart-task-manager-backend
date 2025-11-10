@@ -67,6 +67,7 @@ public class MedicationServicesImpl implements MedicationServices {
             medicationDetails.setName(medication.getName());
             medicationDetails.setTimes(medication.getTimes());
             medicationDetails.setNotes(medication.getNotes());
+            medicationDetails.setId(medication.getId());
             List<LocalTime> medicineTimes = medicineTimesRepository.findById(medication.getId());
             medicationDetails.setLocaltimeList(medicineTimes);
             medicationDetailslist.add(medicationDetails);

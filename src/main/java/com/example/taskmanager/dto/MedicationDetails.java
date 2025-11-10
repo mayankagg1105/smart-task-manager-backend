@@ -7,12 +7,21 @@ import java.util.List;
 
 public class MedicationDetails {
 
+    private int id;
     private String name;
     private String dosage;
     private String frequency;
     private String notes;
     private int times;
     private List<LocalTime> localtimeList;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
