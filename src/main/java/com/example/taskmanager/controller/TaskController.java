@@ -24,9 +24,10 @@ public class TaskController {
     AuthServices authServices;
 
     @PostMapping("/add")
-    public void createTask(@RequestBody TaskDetails taskDetails, @RequestHeader("Authorization") String token ) {
+    public ResponseEntity<?> createTask(@RequestBody TaskDetails taskDetails, @RequestHeader("Authorization") String token ) {
         User user = authServices.verifyToken(token);
-        taskServices.createTask(taskDetails, user);
+        return taskServices.createTask(taskDetails, user);
+
     }
 
     @GetMapping("/getTasks")

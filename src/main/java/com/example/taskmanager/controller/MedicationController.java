@@ -25,8 +25,8 @@ public class MedicationController {
     AuthServices authServices;
 
     @PostMapping("/addMedication")
-    public void createMedicationTask(@RequestBody MedicationDetails medicationDetails, @RequestHeader("Authorization") String token ) {
-        medicationServices.addMedication(medicationDetails, token);
+    public ResponseEntity<?> createMedicationTask(@RequestBody MedicationDetails medicationDetails, @RequestHeader("Authorization") String token ) {
+        return medicationServices.addMedication(medicationDetails, token);
     }
 
     @GetMapping("/getMedications")

@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public interface TaskServices {
-    void createTask(TaskDetails taskdetails, User user);
+    ResponseEntity<?> createTask(TaskDetails taskdetails, User user);
     List<Task> getTasks(User user);
     ResponseEntity<?> deleteTask(Integer id, String token);
     ResponseEntity<?> editTask(Integer id, EditTaskdto editTaskdto, String token);

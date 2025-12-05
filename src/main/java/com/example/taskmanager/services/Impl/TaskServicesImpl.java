@@ -51,6 +51,7 @@ import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -79,7 +80,7 @@ public class TaskServicesImpl implements TaskServices {
 
     // Existing createTask function updated to use getPriorityFromAi
     @Override
-    public void createTask(TaskDetails taskDetails, User user) {
+    public ResponseEntity<?> createTask(TaskDetails taskDetails, User user) {
         Task task = new Task();
         task.setTask(taskDetails.getTask());
 
@@ -90,6 +91,7 @@ public class TaskServicesImpl implements TaskServices {
         task.setDuedatetime(taskDetails.getDuedatetime());
         task.setUserid(user.getUserId());
         taskRepository.save(task);
+        return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
     @Override

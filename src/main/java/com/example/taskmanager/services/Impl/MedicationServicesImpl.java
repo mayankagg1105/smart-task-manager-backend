@@ -10,6 +10,7 @@ import com.example.taskmanager.mysql.repositories.MedicineTimesRepository;
 import com.example.taskmanager.services.AuthServices;
 import com.example.taskmanager.services.MedicationServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class MedicationServicesImpl implements MedicationServices {
     MedicineTimesRepository medicineTimesRepository;
 
     @Override
-    public void addMedication(MedicationDetails medicationDetails, String token){
+    public ResponseEntity<?> addMedication(MedicationDetails medicationDetails, String token){
 
         User user = authServices.verifyToken(token);
         Medication medication = new Medication();
@@ -52,7 +53,7 @@ public class MedicationServicesImpl implements MedicationServices {
             medicineTimes.setTime(time);
             medicineTimesRepository.save(medicineTimes);
         }
-
+        return new ResponseEntity<>(medication, HttpStatus.OK);
     }
 
     @Override
